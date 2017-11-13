@@ -10,3 +10,6 @@ $ vagrant plugin install vagrant-mutate
  
 * install Vagrant-libvirt
 $ vagrant plugin install vagrant-libvirt
+
+* Plugin para definir o tamanho do HD
+$vagrant plugin install vagrant-disksize
