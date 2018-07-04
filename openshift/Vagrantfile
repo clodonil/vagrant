@@ -1,0 +1,33 @@
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
+
+disk = './secondDisk.vdi'
+ 
+Vagrant.configure("2") do |config|
+
+  NODE=["node1","node2","etcd","master"]
+ 
+  config.vm.provider :libvirt do |libvirt|
+      libvirt.host = 'localhost'
+      libvirt.username = 'root'
+      libvirt.id_ssh_key_file = '/root/.ssh/id_rsa'
+      libvirt.connect_via_ssh = true
+      libvirt.storage :file, :size => '20G', :format => 'qcow2'
+   end
+ 
+x=210
+for host in NODE
+ config.vm.define "#{host}" do |machine|
+         machine.vm.box = "centos/7"
+         machine.vm.hostname = "#{host}"
+         machine.vm.network :public_network, :ip => '192.168.0.#{x}', :dev => "br0", :mode => 'bridge'
+
+         machine.vm.provider :libvirt do |setting|
+              setting.memory = 1024
+              setting.cpus = 1
+         end
+
+    end
+x=x+1
+end
+ 
+end

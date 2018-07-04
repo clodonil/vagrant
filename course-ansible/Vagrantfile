@@ -1,0 +1,43 @@
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
+ 
+Vagrant.configure("2") do |config|
+ 
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.host = 'localhost'
+    libvirt.username = 'root'
+    libvirt.id_ssh_key_file = '/root/.ssh/id_rsa'
+    libvirt.connect_via_ssh = true
+  end
+ 
+  N=3
+  (1..N).each do |id|
+     config.vm.define "node-#{id}" do |machine|
+         machine.vm.box = "centos/7"
+         machine.vm.hostname = "node-#{id}"
+         #machine.vm.network :public_network, :dev => "br0", :mode => 'bridge'
+         machine.vm.network "private_network", ip: "192.168.90.#{20+id}"
+ 
+         machine.vm.provider :libvirt do |setting|
+              setting.memory = 512
+              setting.cpus = 1
+         end
+ 
+    end
+  end
+
+
+ config.vm.define "admin" do |machine|
+         machine.vm.box = "centos/7"
+         machine.vm.hostname = "manager"
+         #machine.vm.network :public_network, :dev => "br0", :mode => 'bridge'
+         machine.vm.network "private_network", ip: "192.168.90.30"
+
+         machine.vm.provider :libvirt do |setting|
+              setting.memory = 512
+              setting.cpus = 1
+         end
+
+    end
+
+ 
+end
